@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:flutirprojak/Controller/registration_controller.dart';
+import 'package:flutirprojak/controller/registration_controller.dart';
 import 'package:flutirprojak/component/custom_text_field.dart';
 import 'package:flutirprojak/component/primary_button.dart';
 

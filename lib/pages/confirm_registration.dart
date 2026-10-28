@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:flutirprojak/Controller/confirm_registration_controller.dart';
+import 'package:flutirprojak/controller/confirm_registration_controller.dart';
 import 'package:flutirprojak/component/primary_button.dart';
 
 class ConfirmRegistrationPage extends StatelessWidget {

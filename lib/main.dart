@@ -12,13 +12,9 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GetMaterialApp(
-      title: "Belajar Flutter PPLG 3",
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF6C63FF)),
-        useMaterial3: true,
-      ),
-      initialRoute: Routes.registration,
+      title: "Lumber Tycoon 2 Store",
+      initialRoute: Routes.menuDrawer,
       getPages: Routes.myPages,
     );
   }

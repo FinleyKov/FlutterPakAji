@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart'; // Import ini dibutuhkan untuk TextInputFormatter
 import 'package:get/get.dart';
-import 'package:flutirprojak/Controller/calculator_Controller.dart'; 
+import 'package:flutirprojak/controller/calculator_Controller.dart'; 
 
 class CalculatorPage extends StatelessWidget {
   CalculatorPage({super.key});
