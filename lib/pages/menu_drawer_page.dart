@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:flutirprojak/controller/menu_drawer_controller.dart';
+import 'package:flutirprojak/routes.dart';
 
 class MenuDrawerPage extends StatelessWidget {
   const MenuDrawerPage({super.key});
@@ -73,6 +74,14 @@ class MenuDrawerPage extends StatelessWidget {
                 onTap: () {
                   controller.changePage(0); // Memanggil action di controller
                   Get.back(); // Menutup drawer setelah diklik
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.sports_esports, color: lt2Gold),
+                title: const Text("Game Store (API)", style: TextStyle(color: Colors.white)),
+                onTap: () {
+                  Get.back(); // Menutup drawer setelah diklik
+                  Get.toNamed(Routes.listProduk);
                 },
               ),
               ListTile(
