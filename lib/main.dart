@@ -13,8 +13,9 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return GetMaterialApp(
       debugShowCheckedModeBanner: false,
-      title: "Lumber Tycoon 2 Store",
-      initialRoute: Routes.menuDrawer,
+      title: "Roblox App",
+      theme: ThemeData.dark(),
+      initialRoute: Routes.loginClone,
       getPages: Routes.myPages,
     );
   }

@@ -1,84 +1,110 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:http/http.dart' as http;
 import 'package:flutirprojak/routes.dart';
 
 class LoginCloneController extends GetxController {
-  final TextEditingController usernameController = TextEditingController();
-  final TextEditingController passwordController = TextEditingController();
+  // Controller untuk input teks username dan password
+  final TextEditingController txtUsername = TextEditingController();
+  final TextEditingController txtPassword = TextEditingController();
 
+  // Alias agar tetap kompatibel jika dipanggil dengan nama lain
+  TextEditingController get usernameController => txtUsername;
+  TextEditingController get passwordController => txtPassword;
+
+  // Status loading reaktif (.obs)
   var isLoading = false.obs;
 
+  // Method untuk melakukan hit API POST login ke https://mediadwi.com/api/latihan/login
   void login() async {
-    if (usernameController.text.isEmpty || passwordController.text.isEmpty) {
+    final username = txtUsername.text.trim();
+    final password = txtPassword.text.trim();
+
+    // 1. Validasi jika input username atau password kosong
+    if (username.isEmpty || password.isEmpty) {
       Get.snackbar(
         "Peringatan",
-        "Username dan Password tidak boleh kosong!",
+        "Username dan password harus terisi!",
+        snackPosition: SnackPosition.BOTTOM,
         backgroundColor: Colors.red.shade800,
         colorText: Colors.white,
+        margin: const EdgeInsets.all(12),
+        icon: const Icon(Icons.warning_amber_rounded, color: Colors.white),
       );
       return;
     }
 
-    isLoading.value = true;
+    try {
+      isLoading.value = true;
+      final Uri url = Uri.parse("https://mediadwi.com/api/latihan/login");
 
-    // Menampilkan Dialog Loading & Pengecekan Internet
-    Get.dialog(
-      PopScope(
-        canPop: false,
-        child: AlertDialog(
-          backgroundColor: const Color(0xFF3E2723), // Tema kayu Lumber Tycoon 2
-          title: const Text(
-            "Connecting to Server...",
-            style: TextStyle(color: Colors.white, fontSize: 16),
-          ),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: const [
-              CircularProgressIndicator(color: Color(0xFFFFB300)),
-              SizedBox(height: 20),
-              Text(
-                "Memeriksa koneksi internet / WiFi...\n(Jika WiFi mati, loading akan berputar terus sampai dihidupkan)",
-                textAlign: TextAlign.center,
-                style: TextStyle(color: Color(0xFFA1887F), fontSize: 13),
-              ),
-            ],
-          ),
-        ),
-      ),
-      barrierDismissible: false,
-    );
+      // 2. HTTP POST Request ke API login
+      final response = await http.post(
+        url,
+        body: {
+          "username": username,
+          "password": password,
+        },
+      ).timeout(const Duration(seconds: 15));
 
-    // Looping pengecekan koneksi internet secara real-time
-    bool isConnected = false;
-    while (!isConnected) {
-      try {
-        var connectivityResult = await Connectivity().checkConnectivity();
-        if (connectivityResult.contains(ConnectivityResult.none)) {
-          isConnected = false;
+      isLoading.value = false;
+
+      // 3. Pengecekan status code respons
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+
+        if (data['status'] == true) {
+          Get.snackbar(
+            "Berhasil",
+            data['message']?.toString() ?? "Login berhasil!",
+            snackPosition: SnackPosition.BOTTOM,
+            backgroundColor: const Color(0xFF1B5E20),
+            colorText: Colors.white,
+            margin: const EdgeInsets.all(12),
+            icon: const Icon(Icons.check_circle, color: Colors.white),
+          );
+
+          // Pindah ke Main Menu / Menu Drawer dan tutup halaman login (get.off)
+          Get.offNamed(Routes.menuDrawer);
         } else {
-          isConnected = true;
+          Get.snackbar(
+            "Gagal",
+            data['message']?.toString() ?? "Username atau password salah!",
+            snackPosition: SnackPosition.BOTTOM,
+            backgroundColor: Colors.red.shade800,
+            colorText: Colors.white,
+            margin: const EdgeInsets.all(12),
+            icon: const Icon(Icons.error_outline, color: Colors.white),
+          );
         }
-      } catch (e) {
-        isConnected = false;
+      } else {
+        Get.snackbar(
+          "Error",
+          "Gagal menghubungi server (Status: ${response.statusCode})",
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: Colors.red.shade900,
+          colorText: Colors.white,
+          margin: const EdgeInsets.all(12),
+        );
       }
-
-      if (!isConnected) {
-        await Future.delayed(const Duration(seconds: 2));
-      }
+    } catch (e) {
+      isLoading.value = false;
+      Get.snackbar(
+        "Gagal",
+        "Terjadi kesalahan koneksi: $e",
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.red.shade900,
+        colorText: Colors.white,
+        margin: const EdgeInsets.all(12),
+      );
     }
-
-    isLoading.value = false;
-    await Future.delayed(const Duration(seconds: 1));
-
-    Get.back(); // Tutup dialog loading
-    Get.offAllNamed(Routes.menuDrawer); // Masuk otomatis ke Menu Drawer
   }
 
   @override
   void onClose() {
-    usernameController.dispose();
-    passwordController.dispose();
+    txtUsername.dispose();
+    txtPassword.dispose();
     super.onClose();
   }
 }

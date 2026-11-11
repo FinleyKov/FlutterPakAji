@@ -100,6 +100,15 @@ class MenuDrawerPage extends StatelessWidget {
                   Get.back();
                 },
               ),
+              const Divider(color: woodBorder),
+              ListTile(
+                leading: const Icon(Icons.logout, color: Colors.redAccent),
+                title: const Text("Log Out", style: TextStyle(color: Colors.redAccent)),
+                onTap: () {
+                  Get.back();
+                  Get.offAllNamed(Routes.loginClone);
+                },
+              ),
             ],
           ),
         ),
